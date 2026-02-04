@@ -24,21 +24,19 @@ import landingRoutes from './routes/landing.routes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-console.log(`🚀 Blizzen Creations Backend Server Starting in ${NODE_ENV} mode...`);
+console.log(`🚀 Blizzen Backend starting in ${NODE_ENV} mode...`);
 
 // ------------------------
 // ✅ CORS Setup
 // ------------------------
 const allowedOrigins = [
   'https://www.blizzencreations.in',
-  
   'https://blizzen-creations-deploy.onrender.com',
   'https://blizzen-creations-7m1wlle0p-zenelaits-projects.vercel.app',
   'http://localhost:5173',
@@ -49,7 +47,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // Postman or server-to-server
+    if (!origin) return callback(null, true); // Postman/server-to-server
     if (!allowedOrigins.includes(origin)) {
       console.warn(`⚠️ CORS blocked for origin: ${origin}`);
       return callback(new Error(`CORS blocked for origin: ${origin}`), false);
