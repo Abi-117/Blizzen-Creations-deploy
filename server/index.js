@@ -38,8 +38,8 @@ console.log(`🚀 Blizzen Creations Backend Server Starting in ${NODE_ENV} mode.
 // ------------------------
 const allowedOrigins = [
   'https://www.blizzencreations.in',
-  'https://blizzencreations.com',
-  'https://www.blizzencreations.com',
+  
+  'https://blizzen-creations-deploy.onrender.com',
   'https://blizzen-creations-tagverse.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
