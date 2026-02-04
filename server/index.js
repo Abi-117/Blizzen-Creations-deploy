@@ -29,13 +29,15 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-console.log("🚀 Blizzen Creations Backend Server Starting...");
+console.log(`🚀 Blizzen Creations Backend Server Starting in ${NODE_ENV} mode...`);
 
 // ------------------------
 // ✅ CORS Setup
 // ------------------------
 const allowedOrigins = [
+  'https://www.blizzencreations.in',
   'https://blizzencreations.com',
   'https://www.blizzencreations.com',
   'https://blizzen-creations-tagverse.vercel.app',
@@ -43,14 +45,11 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:8080',
   'http://localhost:8081',
-  'https://www.blizzencreations.in'
-  
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    // allow requests with no origin (Postman, server-to-server)
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // Postman or server-to-server
     if (!allowedOrigins.includes(origin)) {
       console.warn(`⚠️ CORS blocked for origin: ${origin}`);
       return callback(new Error(`CORS blocked for origin: ${origin}`), false);
@@ -67,14 +66,17 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // ------------------------
-// ✅ Serve Uploaded Files (Local only)
+// ✅ Serve Uploaded Files
 // ------------------------
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ------------------------
 // ✅ MongoDB Connection
 // ------------------------
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log('✓ MongoDB connected'))
   .catch((err) => {
     console.error('✗ MongoDB connection error:', err);
@@ -117,6 +119,6 @@ app.use((err, req, res, next) => {
 // ------------------------
 // ✅ Start Server
 // ------------------------
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
