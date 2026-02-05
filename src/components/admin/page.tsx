@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
-import { apiFetch } from "@/lib/apiClient"; // <-- USE apiFetch
+import { apiFetch } from "@/lib/apiClient"; // <-- Production-safe fetch
 
 /* ================= TYPES ================= */
 type Course = {
@@ -25,7 +25,6 @@ type Testimonial = { id: string; name: string; role: string; quote: string };
 
 /* ================= COMPONENT ================= */
 export default function AdminPage() {
-  /* ================= STATE ================= */
   const [hero, setHero] = useState({ title: "", subtitle: "", cta: "" });
   const [about, setAbout] = useState({ description: "" });
 
@@ -60,12 +59,13 @@ export default function AdminPage() {
 
   const [contact, setContact] = useState({ phone: "", email: "", address: "" });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   /* ================= LOAD DATA ================= */
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await apiFetch("/api/landing"); // <- apiFetch handles token & base URL
+        const data = await apiFetch("/api/landing"); // <-- production-safe API
         if (!data) return;
 
         setHero(data.hero || {});
@@ -90,6 +90,7 @@ export default function AdminPage() {
   const saveAll = async () => {
     const payload = { hero, about, courses, features, stats, testimonials, contact };
     try {
+      setSaving(true);
       await apiFetch("/api/landing", {
         method: "POST",
         body: JSON.stringify(payload),
@@ -98,6 +99,8 @@ export default function AdminPage() {
     } catch (err) {
       console.error("Failed to save landing data:", err);
       alert("❌ Failed to save content");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -148,21 +151,30 @@ export default function AdminPage() {
             Featured Course
           </label>
 
-          <Button onClick={() => {
-            setCourses([...courses, { ...courseForm, id: crypto.randomUUID() }]);
-            setCourseForm({ id: "", title: "", duration: "", careerOpportunities: "", fee: "", mode: "Offline", isFeatured: false });
-          }}>➕ Add Course</Button>
+          <Button
+            onClick={() => {
+              setCourses([...courses, { ...courseForm, id: crypto.randomUUID() }]);
+              setCourseForm({ id: "", title: "", duration: "", careerOpportunities: "", fee: "", mode: "Offline", isFeatured: false });
+            }}
+          >
+            ➕ Add Course
+          </Button>
 
           <div className="space-y-3 pt-4">
             {courses.map((course) => (
               <div key={course.id} className="border rounded-lg p-4 flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-lg">{course.title}{course.isFeatured && <span className="ml-2 text-xs text-primary font-bold">★ Featured</span>}</h3>
+                  <h3 className="font-semibold text-lg">
+                    {course.title}
+                    {course.isFeatured && <span className="ml-2 text-xs text-primary font-bold">★ Featured</span>}
+                  </h3>
                   <p className="text-sm text-muted-foreground">⏱ {course.duration} | 💻 {course.mode}</p>
                   <p className="text-sm">💰 {course.fee}</p>
                   <p className="text-xs text-muted-foreground">Careers: {course.careerOpportunities}</p>
                 </div>
-                <Button variant="destructive" size="sm" onClick={() => removeItem(course.id, setCourses)}><Trash2 /></Button>
+                <Button variant="destructive" size="sm" onClick={() => removeItem(course.id, setCourses)}>
+                  <Trash2 />
+                </Button>
               </div>
             ))}
           </div>
@@ -175,15 +187,21 @@ export default function AdminPage() {
           <h2 className="font-semibold text-lg">Features</h2>
           <Input placeholder="Feature title" value={featureForm.title} onChange={(e) => setFeatureForm({ ...featureForm, title: e.target.value })} />
           <Input placeholder="Description" value={featureForm.description} onChange={(e) => setFeatureForm({ ...featureForm, description: e.target.value })} />
-          <Button onClick={() => {
-            setFeatures([...features, { ...featureForm, id: crypto.randomUUID() }]);
-            setFeatureForm({ id: "", title: "", description: "" });
-          }}>Add Feature</Button>
+          <Button
+            onClick={() => {
+              setFeatures([...features, { ...featureForm, id: crypto.randomUUID() }]);
+              setFeatureForm({ id: "", title: "", description: "" });
+            }}
+          >
+            Add Feature
+          </Button>
         </CardContent>
       </Card>
 
       {/* SAVE ALL */}
-      <Button size="lg" onClick={saveAll}>💾 Save All Changes</Button>
+      <Button size="lg" onClick={saveAll} disabled={saving}>
+        {saving ? "Saving..." : "💾 Save All Changes"}
+      </Button>
     </div>
   );
 }

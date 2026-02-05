@@ -3,51 +3,24 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Play, Code2, Database, Globe, Target, Users, Award, Lightbulb, ChevronLeft, ChevronRight, CheckCircle2, TrendingUp, Clock, Star, Quote, Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
-
-/* SHADCN UI */
+import { ArrowRight, Play, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-/* ================= DATA ================= */
-const highlights = [
-  { icon: Target, title: "Industry-Focused", description: "Curriculum designed with current market demands" },
-  { icon: Users, title: "Expert Mentorship", description: "Learn from working IT professionals" },
-  { icon: Award, title: "Job-Ready Skills", description: "Practical training with real projects" },
-  { icon: Lightbulb, title: "Innovation First", description: "Stay ahead with latest technologies" },
-];
-
-const socialLinks = [
-  { icon: Facebook, href: "https://www.facebook.com/people/Blizzen-Creations/61569073670590/", label: "Facebook" },
-  { icon: Instagram, href: "https://www.instagram.com/blizzen_creations/", label: "Instagram" },
-  { icon: Linkedin, href: "https://www.linkedin.com/company/106675251/admin/dashboard/", label: "LinkedIn" },
-  { icon: Youtube, href: "https://www.youtube.com/@blizzencreations", label: "YouTube" },
-];
 
 /* ================= TYPES ================= */
 type Course = { id: string; title: string; duration: string; careerOpportunities: string };
-type Feature = { id: string; title: string; description: string };
-type Stat = { id: string; label: string; value: string };
-type Testimonial = { id: string; name: string; role: string; quote: string };
 type LandingData = {
   hero: { title: string; subtitle: string; cta: string };
   about: { description: string };
   courses: Course[];
-  features: Feature[];
-  stats: Stat[];
-  testimonials: Testimonial[];
-  contact: { phone: string; email: string; address: string };
+  features?: any[];
+  stats?: any[];
+  testimonials?: any[];
+  contact?: { phone: string; email: string; address: string };
 };
 
-/* ================= API FETCH WRAPPER ================= */
-const apiFetch = async (url: string, options: RequestInit = {}) => {
-  const baseUrl = "http://localhost:5001/api";
-  const res = await fetch(`${baseUrl}/${url}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`API request failed with status ${res.status}`);
-  return res.json();
-};
+/* ================= API FETCH ================= */
+// Uses same apiFetch as AdminPage
+import { apiFetch } from "@/lib/apiClient"; 
 
 /* ================= COMPONENT ================= */
 export default function LandingPage() {
@@ -60,7 +33,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchLandingData = async () => {
       try {
-        const json = await apiFetch("landing");
+        const json = await apiFetch("/landing"); // production-ready apiFetch
         setData(json);
       } catch (err) {
         console.error("Failed to fetch landing data:", err);
@@ -71,7 +44,7 @@ export default function LandingPage() {
     fetchLandingData();
   }, []);
 
-  /* ================= CAROUSEL AUTO ================= */
+  /* ================= CAROUSEL ================= */
   useEffect(() => {
     if (isPaused || !data || data.courses.length === 0) return;
 
@@ -107,7 +80,7 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div className="container-custom relative z-10 px-4 text-center">
-          <h1 className="text-4xl md:text-4xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">{data.hero.title}</h1>
+          <h1 className="text-4xl md:text-4xl lg:text-6xl font-bold mb-6 leading-tight">{data.hero.title}</h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">{data.hero.subtitle}</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button size="lg" className="text-lg px-8 py-6 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow" asChild>
