@@ -8,9 +8,9 @@ export type GalleryImage = {
   url: string;
   caption?: string;
 };
-
 const API_BASE_URL =
-  process.env.VITE_API_URL || "http://localhost:5001";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
