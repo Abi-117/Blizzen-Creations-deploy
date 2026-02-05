@@ -40,18 +40,23 @@ const allowedOrigins = [
   'http://localhost:8081',
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    // allow requests with no origin (Postman, server-to-server)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = `CORS blocked for origin: ${origin}`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: [
+      "https://www.blizzencreations.in",
+      "https://blizzen-creations-deploy.onrender.com",
+      "https://blizzen-creations-7m1wlle0p-zenelaits-projects.vercel.app",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false, // 🔴 IMPORTANT
+  })
+);
+
+// Explicit preflight support
+app.options("*", cors());
+
 
 // Body parsers
 app.use(express.json({ limit: '50mb' }));
