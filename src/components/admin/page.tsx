@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 
+/* ================= API BASE ================= */
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+
 /* ================= TYPES ================= */
 type Course = {
   id: string;
@@ -53,12 +57,13 @@ export default function AdminPage() {
   });
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [testimonialForm, setTestimonialForm] = useState<Testimonial>({
-    id: "",
-    name: "",
-    role: "",
-    quote: "",
-  });
+  const [testimonialForm, setTestimonialForm] =
+    useState<Testimonial>({
+      id: "",
+      name: "",
+      role: "",
+      quote: "",
+    });
 
   const [contact, setContact] = useState({
     phone: "",
@@ -70,7 +75,7 @@ export default function AdminPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/landing");
+        const res = await fetch(`${API_BASE_URL}/api/landing`);
         const data = await res.json();
         if (!data) return;
 
@@ -102,7 +107,7 @@ export default function AdminPage() {
     };
 
     try {
-      await fetch("http://localhost:5001/api/landing", {
+      await fetch(`${API_BASE_URL}/api/landing`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -122,12 +127,16 @@ export default function AdminPage() {
   /* ================= UI ================= */
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-12">
-      <h1 className="text-3xl font-bold">Landing Page Admin Panel</h1>
+      <h1 className="text-3xl font-bold">
+        Landing Page Admin Panel
+      </h1>
 
       {/* HERO */}
       <Card>
         <CardContent className="p-6 space-y-3">
-          <h2 className="font-semibold text-lg">Hero Section</h2>
+          <h2 className="font-semibold text-lg">
+            Hero Section
+          </h2>
           <Input
             placeholder="Hero Title"
             value={hero.title}
@@ -139,7 +148,10 @@ export default function AdminPage() {
             placeholder="Subtitle"
             value={hero.subtitle}
             onChange={(e) =>
-              setHero({ ...hero, subtitle: e.target.value })
+              setHero({
+                ...hero,
+                subtitle: e.target.value,
+              })
             }
           />
           <Input
@@ -155,7 +167,9 @@ export default function AdminPage() {
       {/* ABOUT */}
       <Card>
         <CardContent className="p-6">
-          <h2 className="font-semibold text-lg">About Section</h2>
+          <h2 className="font-semibold text-lg">
+            About Section
+          </h2>
           <Textarea
             placeholder="About institute"
             value={about.description}
@@ -170,7 +184,7 @@ export default function AdminPage() {
       <Card>
         <CardContent className="p-6 space-y-4">
           <h2 className="font-semibold text-xl">
-            Courses (Frontend Linked)
+            Courses
           </h2>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -178,12 +192,14 @@ export default function AdminPage() {
               placeholder="Course Title"
               value={courseForm.title}
               onChange={(e) =>
-                setCourseForm({ ...courseForm, title: e.target.value })
+                setCourseForm({
+                  ...courseForm,
+                  title: e.target.value,
+                })
               }
             />
-
             <Input
-              placeholder="Duration (3 Months)"
+              placeholder="Duration"
               value={courseForm.duration}
               onChange={(e) =>
                 setCourseForm({
@@ -192,36 +208,40 @@ export default function AdminPage() {
                 })
               }
             />
-
             <Input
-              placeholder="Career Opportunities (comma separated)"
+              placeholder="Career Opportunities"
               value={courseForm.careerOpportunities}
               onChange={(e) =>
                 setCourseForm({
                   ...courseForm,
-                  careerOpportunities: e.target.value,
+                  careerOpportunities:
+                    e.target.value,
                 })
               }
             />
-
             <Input
-              placeholder="Course Fee (₹25,000)"
+              placeholder="Fee"
               value={courseForm.fee}
               onChange={(e) =>
-                setCourseForm({ ...courseForm, fee: e.target.value })
+                setCourseForm({
+                  ...courseForm,
+                  fee: e.target.value,
+                })
               }
             />
-
             <Input
-              placeholder="Mode (Online / Offline)"
+              placeholder="Mode"
               value={courseForm.mode}
               onChange={(e) =>
-                setCourseForm({ ...courseForm, mode: e.target.value })
+                setCourseForm({
+                  ...courseForm,
+                  mode: e.target.value,
+                })
               }
             />
           </div>
 
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={courseForm.isFeatured}
@@ -239,7 +259,10 @@ export default function AdminPage() {
             onClick={() => {
               setCourses([
                 ...courses,
-                { ...courseForm, id: crypto.randomUUID() },
+                {
+                  ...courseForm,
+                  id: crypto.randomUUID(),
+                },
               ]);
               setCourseForm({
                 id: "",
@@ -255,81 +278,30 @@ export default function AdminPage() {
             ➕ Add Course
           </Button>
 
-          <div className="space-y-3 pt-4">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="border rounded-lg p-4 flex justify-between items-start"
-              >
-                <div>
-                  <h3 className="font-semibold text-lg">
-                    {course.title}
-                    {course.isFeatured && (
-                      <span className="ml-2 text-xs text-primary font-bold">
-                        ★ Featured
-                      </span>
-                    )}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    ⏱ {course.duration} | 💻 {course.mode}
-                  </p>
-                  <p className="text-sm">💰 {course.fee}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Careers: {course.careerOpportunities}
-                  </p>
-                </div>
-
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() =>
-                    removeItem(course.id, setCourses)
-                  }
-                >
-                  <Trash2 />
-                </Button>
+          {courses.map((course) => (
+            <div
+              key={course.id}
+              className="border rounded-lg p-4 flex justify-between"
+            >
+              <div>
+                <h3 className="font-semibold">
+                  {course.title}
+                </h3>
+                <p className="text-sm">
+                  {course.duration} | {course.mode}
+                </p>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* FEATURES */}
-      <Card>
-        <CardContent className="p-6 space-y-3">
-          <h2 className="font-semibold text-lg">Features</h2>
-          <Input
-            placeholder="Feature title"
-            value={featureForm.title}
-            onChange={(e) =>
-              setFeatureForm({ ...featureForm, title: e.target.value })
-            }
-          />
-          <Input
-            placeholder="Description"
-            value={featureForm.description}
-            onChange={(e) =>
-              setFeatureForm({
-                ...featureForm,
-                description: e.target.value,
-              })
-            }
-          />
-          <Button
-            onClick={() => {
-              setFeatures([
-                ...features,
-                { ...featureForm, id: crypto.randomUUID() },
-              ]);
-              setFeatureForm({
-                id: "",
-                title: "",
-                description: "",
-              });
-            }}
-          >
-            Add Feature
-          </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() =>
+                  removeItem(course.id, setCourses)
+                }
+              >
+                <Trash2 />
+              </Button>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
