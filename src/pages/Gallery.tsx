@@ -3,14 +3,10 @@
 import { useEffect, useState } from "react";
 import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
 
-export type GalleryImage = {
-  _id: string;
-  url: string;
-  caption?: string;
-};
+export type GalleryImage = { _id: string; url: string; caption?: string };
+
 const API_BASE_URL =
   process.env.VITE_API_URL || "http://localhost:5001";
-
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -54,11 +50,7 @@ export default function Gallery() {
   }
 
   if (images.length === 0) {
-    return (
-      <p className="text-center text-gray-500 text-lg">
-        No images available.
-      </p>
-    );
+    return <p className="text-center text-gray-500 text-lg">No images available.</p>;
   }
 
   return (
@@ -75,11 +67,7 @@ export default function Gallery() {
             onClick={() => openLightbox(i)}
           >
             <img
-              src={
-                img.url.startsWith("http")
-                  ? img.url
-                  : `${API_BASE_URL}${img.url}`
-              }
+              src={img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`}
               alt={img.caption || "Gallery"}
               className="w-full h-52 object-cover"
             />
@@ -95,10 +83,7 @@ export default function Gallery() {
           >
             <AiOutlineClose />
           </button>
-          <button
-            onClick={prevImage}
-            className="absolute left-4 text-white text-4xl"
-          >
+          <button onClick={prevImage} className="absolute left-4 text-white text-4xl">
             <AiOutlineLeft />
           </button>
           <img
@@ -109,10 +94,7 @@ export default function Gallery() {
             }
             className="max-h-[80vh] max-w-[80vw] object-contain rounded-xl"
           />
-          <button
-            onClick={nextImage}
-            className="absolute right-4 text-white text-4xl"
-          >
+          <button onClick={nextImage} className="absolute right-4 text-white text-4xl">
             <AiOutlineRight />
           </button>
         </div>
