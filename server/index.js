@@ -41,6 +41,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:8081",
+      "http://localhost:5001",
       "https://blizzen-creations-git-main-zenelaits-projects.vercel.app", // Vercel frontend
       "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app", // another Vercel frontend
     ],
