@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-  "start": "node server/index.js",
-  "dev": "node server/index.js",
+  "start": "node index.js",
+  "dev": "node index.js",
   "build": "echo 'No build needed for backend only'",
   "seed:courses": "node seeds/courses-seed.js",
   "seed:courses:v2": "node seeds/courses-seed-v2.js",
