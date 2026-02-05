@@ -1,5 +1,5 @@
 import express from "express";
-import Gallery from "../models/gallery.js"; // Mongoose model
+import Gallery from "../models/Gallery.js"; // Mongoose model
 import multer from "multer";
 import fs from "fs";
 import path from "path";
