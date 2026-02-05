@@ -38,9 +38,10 @@ app.use(
     origin: [
       "https://www.blizzencreations.in",
       "https://blizzen-creations-deploy.onrender.com",
-      "https://blizzen-creations-7m1wlle0p-zenelaits-projects.vercel.app",
       "http://localhost:3000",
       "http://localhost:5173",
+      "https://blizzen-creations-git-main-zenelaits-projects.vercel.app", // Vercel frontend
+      "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app", // another Vercel frontend
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

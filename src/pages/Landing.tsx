@@ -33,8 +33,8 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchLandingData = async () => {
       try {
-        const json = await apiFetch("/landing"); // production-ready apiFetch
-        setData(json);
+        const data = await apiFetch("/landing");// production-ready apiFetch
+        setData(data);
       } catch (err) {
         console.error("Failed to fetch landing data:", err);
       } finally {
