@@ -14,7 +14,7 @@ export const getApiUrl = (): string => {
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
     if (host === "www.blizzencreations.in" || host === "blizzencreations.in") {
-      return "https://api.blizzencreations.com";
+      return "https://blizzen-creations-deploy.onrender.com";
     }
   }
 
