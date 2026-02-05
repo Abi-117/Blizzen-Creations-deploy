@@ -1,13 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/apiClient";
 
-/* ================= API BASE ================= */
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
-
-
-/* ================= TYPES ================= */
 type Course = { id: string; title: string; duration: string; careerOpportunities: string };
 type Feature = { id: string; title: string; description: string };
 type Stat = { id: string; label: string; value: string };
@@ -30,11 +25,10 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/landing`);
-        const json = await res.json();
-        setData(json);
+        const res = await apiClient.get("/api/landing");
+        setData(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch landing data:", err);
       } finally {
         setLoading(false);
       }
