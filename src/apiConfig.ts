@@ -8,7 +8,7 @@ export const API_BASE_URL = (() => {
   // 2️⃣ Browser hostname check (production domain)
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
-    if (host === "www.blizzencreations.com" || host === "blizzencreations.com") {
+    if (host === "www.blizzencreations.in" || host === "blizzencreations.in") {
       return "https://api.blizzencreations.com";
     }
   }
