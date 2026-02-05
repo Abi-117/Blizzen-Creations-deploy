@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 
 /* ================= API BASE ================= */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
+const API_BASE_URL = process.env.VITE_API_URL!;
 
 /* ================= TYPES ================= */
 type Course = {
