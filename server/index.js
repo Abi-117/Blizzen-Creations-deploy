@@ -40,6 +40,7 @@ app.use(
       "https://blizzen-creations-deploy.onrender.com",
       "http://localhost:3000",
       "http://localhost:5173",
+      "http://localhost:8081",
       "https://blizzen-creations-git-main-zenelaits-projects.vercel.app", // Vercel frontend
       "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app", // another Vercel frontend
     ],

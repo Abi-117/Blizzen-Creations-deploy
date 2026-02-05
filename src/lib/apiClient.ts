@@ -1,20 +1,15 @@
 // src/lib/apiClient.ts
+"use client";
 
 /**
  * Get the base API URL depending on environment.
- * - Uses environment variable if set (Vite: VITE_API_URL)
- * - Uses Render backend URL in production
- * - Defaults to localhost in development
  */
-export const getApiUrl = (): string => {
-  // 1️⃣ Vite environment variable (optional override)
+export const API_BASE_URL = (() => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
 
-  // 2️⃣ Production URL (Render backend)
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
-
-    // Your production frontend domains
+    // Production frontend domains
     const prodFrontends = [
       "www.blizzencreations.in",
       "blizzen-creations-git-main-zenelaits-projects.vercel.app",
@@ -26,20 +21,19 @@ export const getApiUrl = (): string => {
     }
   }
 
-  // 3️⃣ Local development fallback
+  // Local dev fallback
   return "http://localhost:5001/api";
-};
-
-// Base API URL
-export const API_BASE_URL = getApiUrl();
+})();
 
 /**
- * Get admin token from localStorage (optional)
+ * Get admin token from localStorage (client-only)
  */
 export const getToken = async (): Promise<string | null> => {
+  if (typeof window === "undefined") return null; // safe SSR
+
   let token = localStorage.getItem("adminToken") || null;
 
-  // In development, fetch a dev token if missing (optional)
+  // Optionally fetch a dev token if missing
   if (!token && import.meta.env.DEV) {
     try {
       const res = await fetch(`${API_BASE_URL}/token`);
@@ -57,15 +51,20 @@ export const getToken = async (): Promise<string | null> => {
 };
 
 /**
- * API fetch wrapper with automatic headers + token
+ * Production-safe API fetch wrapper
  */
 export const apiFetch = async (path: string, options: RequestInit = {}) => {
+  if (typeof window === "undefined") {
+    // Only use in client
+    throw new Error("apiFetch can only be used in the browser.");
+  }
+
   const token = await getToken();
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...options.headers,
+    ...((options.headers as Record<string, string>) || {}),
   };
 
   const res = await fetch(`${API_BASE_URL}${path}`, {
@@ -73,6 +72,10 @@ export const apiFetch = async (path: string, options: RequestInit = {}) => {
     headers,
   });
 
-  if (!res.ok) throw new Error(`API request failed: ${res.status}`);
-  return res.json();
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`API request failed: ${res.status} - ${text}`);
+  }
+
+  return await res.json();
 };
