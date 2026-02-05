@@ -8,8 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 
 /* ================= API BASE ================= */
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 /* ================= TYPES ================= */
 type Course = {
@@ -27,287 +26,65 @@ type Stat = { id: string; label: string; value: string };
 type Testimonial = { id: string; name: string; role: string; quote: string };
 
 export default function AdminPage() {
-  /* ================= STATE ================= */
   const [hero, setHero] = useState({ title: "", subtitle: "", cta: "" });
   const [about, setAbout] = useState({ description: "" });
-
   const [courses, setCourses] = useState<Course[]>([]);
-  const [courseForm, setCourseForm] = useState<Course>({
-    id: "",
-    title: "",
-    duration: "",
-    careerOpportunities: "",
-    fee: "",
-    mode: "Offline",
-    isFeatured: false,
-  });
+  const [contact, setContact] = useState({ phone: "", email: "", address: "" });
 
-  const [features, setFeatures] = useState<Feature[]>([]);
-  const [featureForm, setFeatureForm] = useState<Feature>({
-    id: "",
-    title: "",
-    description: "",
-  });
-
-  const [stats, setStats] = useState<Stat[]>([]);
-  const [statForm, setStatForm] = useState<Stat>({
-    id: "",
-    label: "",
-    value: "",
-  });
-
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [testimonialForm, setTestimonialForm] =
-    useState<Testimonial>({
-      id: "",
-      name: "",
-      role: "",
-      quote: "",
-    });
-
-  const [contact, setContact] = useState({
-    phone: "",
-    email: "",
-    address: "",
-  });
-
-  /* ================= LOAD DATA ================= */
+  /* LOAD DATA */
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/landing`);
-        const data = await res.json();
-        if (!data) return;
-
-        setHero(data.hero || {});
-        setAbout(data.about || {});
-        setCourses(data.courses || []);
-        setFeatures(data.features || []);
-        setStats(data.stats || []);
-        setTestimonials(data.testimonials || []);
-        setContact(data.contact || {});
-      } catch (err) {
-        console.error(err);
-      }
+    const load = async () => {
+      const res = await fetch(`${API_BASE_URL}/api/landing`);
+      const data = await res.json();
+      setHero(data.hero);
+      setAbout(data.about);
+      setCourses(data.courses);
+      setContact(data.contact);
     };
-
-    loadData();
+    load();
   }, []);
 
-  /* ================= SAVE ALL ================= */
+  /* SAVE */
   const saveAll = async () => {
-    const payload = {
-      hero,
-      about,
-      courses,
-      features,
-      stats,
-      testimonials,
-      contact,
-    };
-
-    try {
-      await fetch(`${API_BASE_URL}/api/landing`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      alert("✅ Landing content saved successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("❌ Failed to save content");
-    }
+    await fetch(`${API_BASE_URL}/api/landing`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hero, about, courses, contact }),
+    });
+    alert("Saved successfully");
   };
 
-  /* ================= HELPERS ================= */
-  const removeItem = (id: string, setter: any) => {
-    setter((prev: any[]) => prev.filter((item) => item.id !== id));
-  };
-
-  /* ================= UI ================= */
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-12">
-      <h1 className="text-3xl font-bold">
-        Landing Page Admin Panel
-      </h1>
+    <div className="p-8 max-w-5xl mx-auto space-y-8">
+      <h1 className="text-3xl font-bold">Landing Admin</h1>
 
-      {/* HERO */}
       <Card>
         <CardContent className="p-6 space-y-3">
-          <h2 className="font-semibold text-lg">
-            Hero Section
-          </h2>
           <Input
             placeholder="Hero Title"
             value={hero.title}
-            onChange={(e) =>
-              setHero({ ...hero, title: e.target.value })
-            }
+            onChange={(e) => setHero({ ...hero, title: e.target.value })}
           />
           <Input
             placeholder="Subtitle"
             value={hero.subtitle}
-            onChange={(e) =>
-              setHero({
-                ...hero,
-                subtitle: e.target.value,
-              })
-            }
-          />
-          <Input
-            placeholder="CTA Text"
-            value={hero.cta}
-            onChange={(e) =>
-              setHero({ ...hero, cta: e.target.value })
-            }
+            onChange={(e) => setHero({ ...hero, subtitle: e.target.value })}
           />
         </CardContent>
       </Card>
 
-      {/* ABOUT */}
       <Card>
         <CardContent className="p-6">
-          <h2 className="font-semibold text-lg">
-            About Section
-          </h2>
           <Textarea
-            placeholder="About institute"
+            placeholder="About"
             value={about.description}
-            onChange={(e) =>
-              setAbout({ description: e.target.value })
-            }
+            onChange={(e) => setAbout({ description: e.target.value })}
           />
         </CardContent>
       </Card>
 
-      {/* COURSES */}
-      <Card>
-        <CardContent className="p-6 space-y-4">
-          <h2 className="font-semibold text-xl">
-            Courses
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <Input
-              placeholder="Course Title"
-              value={courseForm.title}
-              onChange={(e) =>
-                setCourseForm({
-                  ...courseForm,
-                  title: e.target.value,
-                })
-              }
-            />
-            <Input
-              placeholder="Duration"
-              value={courseForm.duration}
-              onChange={(e) =>
-                setCourseForm({
-                  ...courseForm,
-                  duration: e.target.value,
-                })
-              }
-            />
-            <Input
-              placeholder="Career Opportunities"
-              value={courseForm.careerOpportunities}
-              onChange={(e) =>
-                setCourseForm({
-                  ...courseForm,
-                  careerOpportunities:
-                    e.target.value,
-                })
-              }
-            />
-            <Input
-              placeholder="Fee"
-              value={courseForm.fee}
-              onChange={(e) =>
-                setCourseForm({
-                  ...courseForm,
-                  fee: e.target.value,
-                })
-              }
-            />
-            <Input
-              placeholder="Mode"
-              value={courseForm.mode}
-              onChange={(e) =>
-                setCourseForm({
-                  ...courseForm,
-                  mode: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={courseForm.isFeatured}
-              onChange={(e) =>
-                setCourseForm({
-                  ...courseForm,
-                  isFeatured: e.target.checked,
-                })
-              }
-            />
-            Featured Course
-          </label>
-
-          <Button
-            onClick={() => {
-              setCourses([
-                ...courses,
-                {
-                  ...courseForm,
-                  id: crypto.randomUUID(),
-                },
-              ]);
-              setCourseForm({
-                id: "",
-                title: "",
-                duration: "",
-                careerOpportunities: "",
-                fee: "",
-                mode: "Offline",
-                isFeatured: false,
-              });
-            }}
-          >
-            ➕ Add Course
-          </Button>
-
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className="border rounded-lg p-4 flex justify-between"
-            >
-              <div>
-                <h3 className="font-semibold">
-                  {course.title}
-                </h3>
-                <p className="text-sm">
-                  {course.duration} | {course.mode}
-                </p>
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() =>
-                  removeItem(course.id, setCourses)
-                }
-              >
-                <Trash2 />
-              </Button>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* SAVE */}
       <Button size="lg" onClick={saveAll}>
-        💾 Save All Changes
+        Save All Changes
       </Button>
     </div>
   );
