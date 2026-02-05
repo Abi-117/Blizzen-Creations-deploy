@@ -6,17 +6,16 @@ import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
 export type GalleryImage = {
   _id: string;
   url: string;
-  caption?: string; // optional for lightbox
+  caption?: string;
 };
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  /** Fetch gallery images from backend */
   const fetchGallery = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery`);
@@ -44,17 +43,15 @@ export default function Gallery() {
     lightboxIndex !== null &&
     setLightboxIndex((lightboxIndex + 1) % images.length);
 
-  if (loading) {
+  if (loading)
     return (
       <div className="min-h-[400px] flex items-center justify-center">
         <div className="text-gray-500 text-lg animate-pulse">Loading gallery...</div>
       </div>
     );
-  }
 
-  if (images.length === 0) {
+  if (images.length === 0)
     return <p className="text-center text-gray-500 text-lg">No images available.</p>;
-  }
 
   return (
     <section className="relative bg-gradient-to-b from-blue-50 to-white py-40 px-4">
@@ -80,8 +77,6 @@ export default function Gallery() {
               alt={img.caption || "Gallery"}
               className="w-full h-52 object-cover rounded-xl"
             />
-
-            {/* Hover overlay */}
             <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
               <p className="text-white font-semibold text-lg">View</p>
             </div>
@@ -98,10 +93,7 @@ export default function Gallery() {
           >
             <AiOutlineClose />
           </button>
-          <button
-            onClick={prevImage}
-            className="absolute left-4 text-white text-4xl"
-          >
+          <button onClick={prevImage} className="absolute left-4 text-white text-4xl">
             <AiOutlineLeft />
           </button>
           <img
@@ -113,10 +105,7 @@ export default function Gallery() {
             alt={images[lightboxIndex].caption || "Gallery"}
             className="max-h-[80vh] max-w-[80vw] object-contain rounded-xl"
           />
-          <button
-            onClick={nextImage}
-            className="absolute right-4 text-white text-4xl"
-          >
+          <button onClick={nextImage} className="absolute right-4 text-white text-4xl">
             <AiOutlineRight />
           </button>
           {images[lightboxIndex].caption && (
@@ -126,10 +115,6 @@ export default function Gallery() {
           )}
         </div>
       )}
-
-      {/* Decorative background circles */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-purple-200/20 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-      <div className="absolute bottom-0 right-48 w-96 h-96 bg-yellow-200/20 rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
     </section>
   );
 }

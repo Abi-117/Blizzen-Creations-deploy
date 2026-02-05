@@ -4,7 +4,7 @@ import { useEffect, useState, DragEvent } from "react";
 
 export type GalleryImage = { _id: string; url: string };
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);
@@ -13,7 +13,6 @@ export default function GalleryUpload() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Fetch gallery
   const fetchGallery = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery`);
@@ -36,19 +35,14 @@ export default function GalleryUpload() {
     setTimeout(() => setMsg(null), 3000);
   };
 
-  // Drag-and-drop handlers
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const dt = e.dataTransfer;
-    if (!dt.files) return;
-    const selected = Array.from(dt.files);
+    const selected = Array.from(e.dataTransfer.files);
     setFiles(selected);
     setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => e.preventDefault();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -69,7 +63,6 @@ export default function GalleryUpload() {
         method: "POST",
         body: formData,
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
 
@@ -87,15 +80,10 @@ export default function GalleryUpload() {
 
   const deleteImage = async (id: string) => {
     if (!confirm("Delete this image?")) return;
-
     try {
-      const res = await fetch(`${API_BASE_URL}/api/gallery/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await fetch(`${API_BASE_URL}/api/gallery/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Delete failed");
-
       fetchGallery();
       showMessage("success", "Image deleted successfully!");
     } catch (err: any) {
@@ -106,7 +94,6 @@ export default function GalleryUpload() {
 
   return (
     <div className="space-y-6 p-4">
-      {/* Toast */}
       {msg && (
         <div
           className={`fixed top-4 right-4 px-4 py-2 rounded shadow text-white ${
@@ -125,13 +112,7 @@ export default function GalleryUpload() {
       >
         <h3 className="text-lg font-semibold mb-4">Upload Images</h3>
         <p className="mb-2 text-gray-500">Drag & drop images here or click to select files</p>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-          className="mb-4 cursor-pointer"
-        />
+        <input type="file" multiple accept="image/*" onChange={handleFileChange} className="mb-4 cursor-pointer" />
         {preview.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             {preview.map((src, i) => (
