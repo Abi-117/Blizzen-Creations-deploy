@@ -5,23 +5,23 @@ import ContactInfo from '../models/ContactInfo.js';
 dotenv.config();
 
 const contactData = {
-  companyName: "Blizzen Creations",
-  address: "Tech City, Innovation Hub, 123 Tech Street",
-  city: "Bangalore",
-  state: "Karnataka",
-  zipCode: "560001",
+  companyName: "Blizzen Creations Training & Placements",
+  address: "Y Block 1st street,",
+  city: "Anna Nagar,",
+  state: " Chennai",
+  zipCode: "600040",
   country: "India",
   phone: [
-    { label: "Main", number: "+91 98765 43210" },
-    { label: "Support", number: "+91 98765 43211" }
+    { label: "Main", number: "+91 9884264816" },
+    { label: "Support", number: "+91 6382277657" }
   ],
   email: [
-    { label: "Info", address: "info@blizzencreations.com" },
-    { label: "Admissions", address: "admissions@blizzencreations.com" },
-    { label: "Support", address: "support@blizzencreations.com" }
+    { label: "Info", address: "blizzencreations@gmail.com" },
+    { label: "Admissions", address: "careers.blizzencreations@gmail.com" },
+    { label: "Support", address: "blizzengroups@gmail.com" }
   ],
   officeHours: {
-    monday: "9 AM - 7 PM",
+    "Mon-Fri": "7:30 AM - 9:00 PM",
     tuesday: "9 AM - 7 PM",
     wednesday: "9 AM - 7 PM",
     thursday: "9 AM - 7 PM",
