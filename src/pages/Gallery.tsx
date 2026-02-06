@@ -5,7 +5,11 @@ import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
 
 export type GalleryImage = { _id: string; url: string; caption?: string };
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+// Auto-switch API URL between local and deployed
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5001"
+    : "https://blizzen-creations-deploy.onrender.com";
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -14,8 +18,9 @@ export default function Gallery() {
 
   const fetchGallery = async () => {
     try {
+      console.log("Fetching from:", `${API_BASE_URL}/api/gallery`);
       const res = await fetch(`${API_BASE_URL}/api/gallery`);
-      if (!res.ok) throw new Error("Failed to fetch gallery");
+      if (!res.ok) throw new Error(`Failed to fetch gallery, status ${res.status}`);
       const data: GalleryImage[] = await res.json();
       setImages(data);
     } catch (err) {

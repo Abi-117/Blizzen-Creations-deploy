@@ -4,8 +4,11 @@ import { useEffect, useState, DragEvent } from "react";
 
 export type GalleryImage = { _id: string; url: string };
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
-
+// Automatically switch API base URL between local and deployed
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5001"
+    : "https://blizzen-creations-deploy.onrender.com";
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);
@@ -13,9 +16,12 @@ export default function GalleryUpload() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Fetch gallery images
   const fetchGallery = async () => {
     try {
+      console.log("Fetching from:", `${API_BASE_URL}/api/gallery`);
       const res = await fetch(`${API_BASE_URL}/api/gallery`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       const data: GalleryImage[] = await res.json();
       setImages(data);
     } catch (err) {
@@ -27,11 +33,10 @@ export default function GalleryUpload() {
     fetchGallery();
   }, []);
 
-  // Cleanup previews to avoid memory leaks
-  useEffect(() => {
-    return () => preview.forEach(URL.revokeObjectURL);
-  }, [preview]);
+  // Cleanup previews
+  useEffect(() => () => preview.forEach(URL.revokeObjectURL), [preview]);
 
+  // Handle drag and drop
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const selected = Array.from(e.dataTransfer.files);
@@ -39,8 +44,9 @@ export default function GalleryUpload() {
     setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
+  // Upload images
   const handleUpload = async () => {
-    if (files.length === 0) return;
+    if (!files.length) return;
     const formData = new FormData();
     files.forEach((f) => formData.append("images", f));
 
@@ -61,6 +67,7 @@ export default function GalleryUpload() {
     }
   };
 
+  // Delete image
   const deleteImage = async (id: string) => {
     try {
       await fetch(`${API_BASE_URL}/api/gallery/${id}`, { method: "DELETE" });
@@ -88,7 +95,7 @@ export default function GalleryUpload() {
         />
         <button
           onClick={handleUpload}
-          disabled={loading || files.length === 0}
+          disabled={loading || !files.length}
           className="mt-4 bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
         >
           {loading ? "Uploading..." : "Upload"}
