@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from '@/config/api';
+import { apiFetch } from '@/lib/apiClient';
 
 // Create axios instance with optimized defaults
 const apiClient = axios.create({
@@ -332,13 +333,19 @@ apiClient.interceptors.response.use(
 );
 
 export const apiServices = {
-  async getGallery() {
-    const res = await fetch(`${API_BASE_URL}/api/gallery`);
-    if (!res.ok) {
-      throw new Error("Failed to fetch gallery");
-    }
-    return res.json();
-  },
+  // 🔹 Gallery
+  getGallery: () => apiFetch("/api/gallery"),
+
+  uploadGallery: (formData: FormData) =>
+    apiFetch("/api/gallery/upload", {
+      method: "POST",
+      body: formData,
+    }),
+
+  deleteGalleryImage: (id: string) =>
+    apiFetch(`/api/gallery/${id}`, {
+      method: "DELETE",
+    }),
 };
 
 export default apiService;
