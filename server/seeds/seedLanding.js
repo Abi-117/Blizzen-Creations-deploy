@@ -43,16 +43,16 @@ const landingData = {
   stats: [
     { label: "Students Trained", value: "500+" },
     { label: "Courses", value: "10+" },
-    { label: "Placements", value: "90%+" },
+    { label: "Placements", value: "100%+" },
   ],
   testimonials: [
-    { name: "John Doe", role: "Software Engineer", quote: "Blizzen Creations transformed my career!", rating: 5 },
-    { name: "Jane Smith", role: "Data Analyst", quote: "Highly recommend for anyone entering IT.", rating: 5 },
+    { name: "John Doe", role: "Software Engineer", quote: "Blizzen Creations completely transformed my career. Within 2 months, I got placed in a good company. Highly recommended!", rating: 5 },
+    { name: "Jane Smith", role: "Data Analyst", quote: "The trainers are very supportive and classes are fully practical. Best IT training institute in Chennai!", rating: 5 },
   ],
   contact: {
-    phone: "+919198842648",
-    email: "info@blizzencreations.in",
-    address: "Chennai, India",
+    phone: "+91 9884264816",
+    email: "blizzencreations@gmail.com",
+    address: "Anna Nagar, Chennai, India",
   },
 };
 

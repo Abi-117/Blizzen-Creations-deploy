@@ -260,14 +260,14 @@ const Contact = () => {
                             <SelectValue placeholder="Select a course" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="python-fullstack" className="text-sm sm:text-base">Python Full Stack Development</SelectItem>
-                            <SelectItem value="web-development" className="text-sm sm:text-base">Web Development</SelectItem>
-                            <SelectItem value="ai-machine-learning" className="text-sm sm:text-base">AI & Machine Learning</SelectItem>
-                            <SelectItem value="data-science-analytics" className="text-sm sm:text-base">Data Science & Analytics</SelectItem>
-                            <SelectItem value="cloud-devops" className="text-sm sm:text-base">Cloud Computing & DevOps</SelectItem>
-                            <SelectItem value="cybersecurity" className="text-sm sm:text-base">Cybersecurity</SelectItem>
-                            <SelectItem value="ui-ux-design" className="text-sm sm:text-base">UI/UX Design</SelectItem>
-                            <SelectItem value="digital-marketing" className="text-sm sm:text-base">Digital Marketing</SelectItem>
+             <SelectItem value="python" className="text-sm sm:text-base">Python Full Stack Development</SelectItem>
+                            <SelectItem value="web" className="text-sm sm:text-base">Web Development</SelectItem>
+                            <SelectItem value="ai" className="text-sm sm:text-base">AI & Machine Learning</SelectItem>
+                            <SelectItem value="data" className="text-sm sm:text-base">Data Science & Analytics</SelectItem>
+                            <SelectItem value="cloud" className="text-sm sm:text-base">Cloud Computing & DevOps</SelectItem>
+                            <SelectItem value="security" className="text-sm sm:text-base">Cybersecurity</SelectItem>
+                            <SelectItem value="design" className="text-sm sm:text-base">UI/UX Design</SelectItem>
+                            <SelectItem value="marketing" className="text-sm sm:text-base">Digital Marketing</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
