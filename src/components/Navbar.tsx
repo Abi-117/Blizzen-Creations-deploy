@@ -29,7 +29,7 @@ const Navbar = () => {
             { name: "Courses", path: "/courses", isActive: true, order: 3 },
             { name: "Placements", path: "/placements", isActive: true, order: 4 },
             { name: "Blog", path: "/blog", isActive: true, order: 5 },
-            { name: "Overview", path: "/overview", isActive: true, order: 6 },
+            { name: "Overview", path: "/landing", isActive: true, order: 6 },
             { name: "Gallery", path: "/gallery", isActive: true, order: 7 },
             { name: "Contact", path: "/contact", isActive: true, order: 8 },
           ],
