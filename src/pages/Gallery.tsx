@@ -2,46 +2,49 @@
 
 import { useEffect, useState } from "react";
 import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
+import { apiServices } from "@/services/api";
 
-export type GalleryImage = { _id: string; url: string; caption?: string };
+export type GalleryImage = {
+  _id: string;
+  url: string;
+  caption?: string;
+};
 
-// Auto-switch API URL between local and deployed
-const API_BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5001"
-    : "https://blizzen-creations-deploy.onrender.com";
+const API_BASE_URL = "https://blizzen-creations-deploy.onrender.com";
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  useEffect(() => {
+    fetchGallery();
+  }, []);
+
   const fetchGallery = async () => {
     try {
-      console.log("Fetching from:", `${API_BASE_URL}/api/gallery`);
-      const res = await fetch(`${API_BASE_URL}/api/gallery`);
-      if (!res.ok) throw new Error(`Failed to fetch gallery, status ${res.status}`);
-      const data: GalleryImage[] = await res.json();
+      setLoading(true);
+      const data = await apiServices.getGallery();
       setImages(data);
-    } catch (err) {
-      console.error("FETCH ERROR:", err);
+    } catch (error) {
+      console.error("Gallery fetch failed:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchGallery();
-  }, []);
-
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
-  const prevImage = () =>
-    lightboxIndex !== null &&
+
+  const prevImage = () => {
+    if (lightboxIndex === null) return;
     setLightboxIndex((lightboxIndex + images.length - 1) % images.length);
-  const nextImage = () =>
-    lightboxIndex !== null &&
+  };
+
+  const nextImage = () => {
+    if (lightboxIndex === null) return;
     setLightboxIndex((lightboxIndex + 1) % images.length);
+  };
 
   if (loading) {
     return (
@@ -54,13 +57,19 @@ export default function Gallery() {
   }
 
   if (images.length === 0) {
-    return <p className="text-center text-gray-500 text-lg">No images available.</p>;
+    return (
+      <p className="text-center text-gray-500 text-lg">
+        No images available.
+      </p>
+    );
   }
 
   return (
     <section className="relative bg-gradient-to-b from-blue-50 to-white py-40 px-4">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-800 mb-2">Our Gallery</h2>
+        <h2 className="text-4xl font-bold text-gray-800 mb-2">
+          Our Gallery
+        </h2>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -71,8 +80,12 @@ export default function Gallery() {
             onClick={() => openLightbox(i)}
           >
             <img
-              src={img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`}
-              alt={img.caption || "Gallery"}
+              src={
+                img.url.startsWith("http")
+                  ? img.url
+                  : `${API_BASE_URL}${img.url}`
+              }
+              alt={img.caption || "Gallery image"}
               className="w-full h-52 object-cover"
             />
           </div>
@@ -87,9 +100,14 @@ export default function Gallery() {
           >
             <AiOutlineClose />
           </button>
-          <button onClick={prevImage} className="absolute left-4 text-white text-4xl">
+
+          <button
+            onClick={prevImage}
+            className="absolute left-4 text-white text-4xl"
+          >
             <AiOutlineLeft />
           </button>
+
           <img
             src={
               images[lightboxIndex].url.startsWith("http")
@@ -98,7 +116,11 @@ export default function Gallery() {
             }
             className="max-h-[80vh] max-w-[80vw] object-contain rounded-xl"
           />
-          <button onClick={nextImage} className="absolute right-4 text-white text-4xl">
+
+          <button
+            onClick={nextImage}
+            className="absolute right-4 text-white text-4xl"
+          >
             <AiOutlineRight />
           </button>
         </div>

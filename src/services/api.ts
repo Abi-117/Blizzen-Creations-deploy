@@ -331,4 +331,14 @@ apiClient.interceptors.response.use(
   }
 );
 
+export const apiServices = {
+  async getGallery() {
+    const res = await fetch(`${API_BASE_URL}/api/gallery`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch gallery");
+    }
+    return res.json();
+  },
+};
+
 export default apiService;
