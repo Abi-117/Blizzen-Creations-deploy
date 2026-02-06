@@ -5,8 +5,7 @@ import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
 
 export type GalleryImage = { _id: string; url: string; caption?: string };
 
-const API_BASE_URL =
-  process.env.VITE_API_URL || "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
