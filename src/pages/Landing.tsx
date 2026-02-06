@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 
 /* shadcn */
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 
 /* ================= STATIC DATA ================= */
 
