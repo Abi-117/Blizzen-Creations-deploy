@@ -36,21 +36,18 @@ console.log("🚀 Blizzen Creations Backend Starting...");
 app.use(
   cors({
     origin: [
-      "*",
-      "https://www.blizzencreations.in",
-      "https://blizzen-creations-deploy.onrender.com",
-      "http://localhost:3000",
       "http://localhost:5173",
-      "http://localhost:8081",
-      "http://localhost:5001",
-      "https://blizzen-creations-git-main-zenelaits-projects.vercel.app", // Vercel frontend
-      "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app", // another Vercel frontend
+      "http://localhost:3000",
+      "https://www.blizzencreations.in",
+      "https://blizzencreations.in",
+      "https://blizzen-creations-git-main-zenelaits-projects.vercel.app",
+      "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: false,
   })
 );
+
 
 // Preflight
 app.options("*", cors());
@@ -61,6 +58,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 /* ===== STATIC FILES ===== */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 /* ===== ROOT ROUTE (IMPORTANT) ===== */
 app.get("/", (req, res) => {
@@ -84,7 +82,6 @@ app.use("/api/placement-stats", placementStatsRoutes);
 app.use("/api/contact-info", contactInfoRoutes);
 app.use("/api/about", aboutRoutes);
 app.use("/api/home-content", homeContentRoutes);
-app.use("/api/upload", uploadRoutes);
 app.use("/api/trust-stats", trustStatsRoutes);
 app.use("/api/footer-content", footerContentRoutes);
 app.use("/api/blog", blogRoutes);
