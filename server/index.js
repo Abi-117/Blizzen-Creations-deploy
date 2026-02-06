@@ -40,6 +40,7 @@ app.use(
       "http://localhost:3000",
       "https://www.blizzencreations.in",
       "https://blizzencreations.in",
+      "http://localhost:8081",
       "https://blizzen-creations-git-main-zenelaits-projects.vercel.app",
       "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app",
     ],
@@ -85,6 +86,7 @@ app.use("/api/home-content", homeContentRoutes);
 app.use("/api/trust-stats", trustStatsRoutes);
 app.use("/api/footer-content", footerContentRoutes);
 app.use("/api/blog", blogRoutes);
+app.use("/api/upload", uploadRoutes);
 app.use("/api/navbar", navbarRoutes);
 app.use("/api/landing", landingRoutes);
 app.use("/api/gallery", galleryRoutes);
