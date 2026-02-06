@@ -6,8 +6,8 @@ dotenv.config();
 
 const contactData = {
   companyName: "Blizzen Creations Training & Placements",
-  address: "Y Block 1st street,",
-  city: "Anna Nagar,",
+  address: "Y Block 1st street",
+  city: "Anna Nagar",
   state: " Chennai",
   zipCode: "600040",
   country: "India",
@@ -21,7 +21,7 @@ const contactData = {
     { label: "Support", address: "blizzengroups@gmail.com" }
   ],
   officeHours: {
-    "Mon-Fri": "7:30 AM - 9:00 PM",
+    monday: "9 AM - 7 PM",
     tuesday: "9 AM - 7 PM",
     wednesday: "9 AM - 7 PM",
     thursday: "9 AM - 7 PM",
