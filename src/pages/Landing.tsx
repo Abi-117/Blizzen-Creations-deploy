@@ -11,13 +11,11 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
-  TrendingUp,
-  Clock,
   Star,
   Quote,
 } from "lucide-react";
 
-/* ========= SHADCN ========= */
+/* shadcn */
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -67,23 +65,21 @@ const testimonials = [
   },
 ];
 
-/* ================= COMPONENT ================= */
-
 export default function LandingPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
-    const i = setInterval(
-      () => setCurrentIndex((p) => (p + 1) % courses.length),
-      4000
-    );
-    return () => clearInterval(i);
+    if (paused || courses.length === 0) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((p) => (p + 1) % courses.length);
+    }, 4000);
+    return () => clearInterval(timer);
   }, [paused]);
 
   const prev = () =>
     setCurrentIndex((p) => (p - 1 + courses.length) % courses.length);
+
   const next = () =>
     setCurrentIndex((p) => (p + 1) % courses.length);
 
@@ -97,9 +93,9 @@ export default function LandingPage() {
   return (
     <main className="overflow-hidden">
 
-      {/* ================= HERO ================= */}
+      {/* HERO */}
       <section className="min-h-screen flex items-center justify-center pt-24 text-center">
-        <div className="max-w-4xl">
+        <div className="max-w-4xl px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Build a High-Paying IT Career
           </h1>
@@ -117,16 +113,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= ABOUT ================= */}
+      {/* ABOUT */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto grid lg:grid-cols-2 gap-10 px-4">
           <div>
             <h2 className="text-4xl font-bold mb-4">
               Why Choose <span className="text-primary">Blizzen Creations</span>?
             </h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Job-oriented IT training institute in Chennai with placement support,
-              real-time projects and career guidance.
+            <p className="text-muted-foreground">
+              Job-oriented IT training institute with real-time projects & placement support.
             </p>
           </div>
 
@@ -142,17 +137,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= COURSES ================= */}
+      {/* COURSES */}
       <section className="py-20">
         <div
           className="container mx-auto max-w-5xl relative"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <button onClick={prev} className="absolute left-0 top-1/2">
+          <button onClick={prev} className="absolute left-0 top-1/2 z-10">
             <ChevronLeft />
           </button>
-          <button onClick={next} className="absolute right-0 top-1/2">
+          <button onClick={next} className="absolute right-0 top-1/2 z-10">
             <ChevronRight />
           </button>
 
@@ -163,14 +158,14 @@ export default function LandingPage() {
             >
               {courses.map((c) => (
                 <div key={c.id} className="min-w-full px-4">
-                  <Card className="shadow-xl">
+                  <Card>
                     <CardHeader className="bg-primary text-white">
                       <h3 className="text-2xl font-bold">{c.title}</h3>
-                      <p className="text-sm opacity-80">Duration: {c.duration}</p>
+                      <p className="text-sm">Duration: {c.duration}</p>
                     </CardHeader>
 
                     <CardContent className="p-6 space-y-4">
-                      <div className="flex gap-2 flex-wrap">
+                      <div className="flex flex-wrap gap-2">
                         {c.careerOpportunities.split(",").map((r, i) => (
                           <Badge key={i} variant="outline">
                             {r.trim()}
@@ -178,19 +173,17 @@ export default function LandingPage() {
                         ))}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        {[
-                          "Real-time projects",
-                          "Placement support",
-                          "Interview prep",
-                          "Expert mentors",
-                        ].map((t, i) => (
-                          <div key={i} className="flex gap-2 items-center">
-                            <CheckCircle2 className="text-primary w-4 h-4" />
-                            <span className="text-sm">{t}</span>
-                          </div>
-                        ))}
-                      </div>
+                      {[
+                        "Real-time projects",
+                        "Placement support",
+                        "Interview prep",
+                        "Expert mentors",
+                      ].map((t, i) => (
+                        <div key={i} className="flex gap-2 items-center">
+                          <CheckCircle2 className="w-4 h-4 text-primary" />
+                          <span className="text-sm">{t}</span>
+                        </div>
+                      ))}
                     </CardContent>
 
                     <CardFooter>
@@ -206,7 +199,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= TESTIMONIALS ================= */}
+      {/* TESTIMONIALS */}
       <section className="py-20 bg-muted/20">
         <div className="container mx-auto grid md:grid-cols-2 gap-6 px-4">
           {testimonials.map((t) => (
