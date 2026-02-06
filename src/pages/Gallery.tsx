@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
+import img1 from "../assets/IMG1.jpeg";
 
 export type GalleryImage = {
   _id: string;
@@ -75,8 +76,13 @@ export default function Gallery() {
             className="relative overflow-hidden rounded-xl shadow-lg group cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl"
             onClick={() => openLightbox(i)}
           >
-            <img
+            {/* <img
               src={img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`}
+              alt={img.caption || "Gallery"}
+              className="w-full h-52 object-cover rounded-xl"
+            /> */}
+            <img
+              src={img1}
               alt={img.caption || "Gallery"}
               className="w-full h-52 object-cover rounded-xl"
             />
