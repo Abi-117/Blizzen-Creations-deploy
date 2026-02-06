@@ -36,6 +36,7 @@ console.log("🚀 Blizzen Creations Backend Starting...");
 app.use(
   cors({
     origin: [
+      "*",
       "https://www.blizzencreations.in",
       "https://blizzen-creations-deploy.onrender.com",
       "http://localhost:3000",
