@@ -25,7 +25,7 @@ type Testimonial = { id: string; name: string; role: string; quote: string };
 /* ================= HELPER: API BASE ================= */
 const getApiBaseUrl = () => {
   // Use environment variable first (Vercel/Render)
-  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (process.env.VITE_API_URL ) return process.env.VITE_API_URL ;
   // Fallback for local dev
   return "http://localhost:5001";
 };
