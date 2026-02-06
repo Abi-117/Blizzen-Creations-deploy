@@ -19,7 +19,7 @@ import footerContentRoutes from "./routes/footer-content.js";
 import blogRoutes from "./routes/blog.js";
 import navbarRoutes from "./routes/navbar.js";
 import galleryRoutes from "./routes/gallery.js";
-//import landingRoutes from "./routes/landing.routes.js";
+import landingRoutes from "./routes/landing.routes.js";
 
 /* ===== CONFIG ===== */
 const __filename = fileURLToPath(import.meta.url);
@@ -86,7 +86,7 @@ app.use("/api/trust-stats", trustStatsRoutes);
 app.use("/api/footer-content", footerContentRoutes);
 app.use("/api/blog", blogRoutes);
 app.use("/api/navbar", navbarRoutes);
-//app.use("/api/landing", landingRoutes);
+app.use("/api/landing", landingRoutes);
 app.use("/api/gallery", galleryRoutes);
 
 /* ===== HEALTH CHECK ===== */
