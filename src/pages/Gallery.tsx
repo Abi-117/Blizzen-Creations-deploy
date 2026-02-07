@@ -2,22 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
+import { GalleryImage } from "./GalleryUpload";
 
-export type GalleryImage = {
-  _id: string;
-  url: string;       // relative or full URL
-  caption?: string;
-};
-
-const API_BASE_URL = process.env.VITE_API_URL!; // must be set in deploy env
+const API_BASE_URL = process.env.VITE_API_URL!;
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  const getFullUrl = (url: string) =>
-    url.startsWith("http") ? url : `${API_BASE_URL}/${url}`;
 
   const fetchGallery = async () => {
     try {
@@ -60,10 +52,6 @@ export default function Gallery() {
     <section className="relative bg-gradient-to-b from-blue-50 to-white py-40 px-4">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-gray-800 mb-2">Our Gallery</h2>
-        <div className="flex justify-center items-center gap-2 mb-2">
-          <div className="w-16 h-1 bg-blue-500 rounded-full"></div>
-          <div className="w-2 h-1 bg-blue-300 rounded-full"></div>
-        </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -74,11 +62,11 @@ export default function Gallery() {
             onClick={() => openLightbox(i)}
           >
             <img
-              src={getFullUrl(img.url)}
+              src={img.url}
               alt={img.caption || "Gallery"}
               className="w-full h-52 object-cover rounded-xl"
             />
-            <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 flex items-center justify-center">
               <p className="text-white font-semibold text-lg">View</p>
             </div>
           </div>
@@ -87,17 +75,14 @@ export default function Gallery() {
 
       {lightboxIndex !== null && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <button
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white text-3xl"
-          >
+          <button onClick={closeLightbox} className="absolute top-4 right-4 text-white text-3xl">
             <AiOutlineClose />
           </button>
           <button onClick={prevImage} className="absolute left-4 text-white text-4xl">
             <AiOutlineLeft />
           </button>
           <img
-            src={getFullUrl(images[lightboxIndex].url)}
+            src={images[lightboxIndex].url}
             alt={images[lightboxIndex].caption || "Gallery"}
             className="max-h-[80vh] max-w-[80vw] object-contain rounded-xl"
           />
