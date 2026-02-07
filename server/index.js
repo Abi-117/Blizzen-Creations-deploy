@@ -61,6 +61,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
+
 /* ===== ROOT ROUTE (IMPORTANT) ===== */
 app.get("/", (req, res) => {
   res.send("🚀 Blizzen Creations Backend is running");
