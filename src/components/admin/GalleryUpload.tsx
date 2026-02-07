@@ -2,39 +2,29 @@
 
 import { useEffect, useState, DragEvent } from "react";
 
-export type GalleryImage = {
-  _id: string;
-  url: string; // ✅ FULL HTTPS URL
-};
+export type GalleryImage = { _id: string; url: string };
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5001";
+  import.meta.env.VITE_API_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:5001";
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);
   const [preview, setPreview] = useState<string[]>([]);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Toast helper
   const showMessage = (type: "success" | "error", text: string) => {
     setMsg({ type, text });
     setTimeout(() => setMsg(null), 3000);
   };
 
-  // Fetch gallery
   const fetchGallery = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/gallery`, {
-        cache: "no-store",
-      });
-
+      const res = await fetch(`${API_BASE_URL}/api/gallery`);
       if (!res.ok) throw new Error("Failed to fetch gallery");
-
       const data: GalleryImage[] = await res.json();
       setImages(data);
     } catch (err) {
@@ -45,42 +35,22 @@ export default function GalleryUpload() {
 
   useEffect(() => {
     fetchGallery();
-
-    return () => {
-      preview.forEach((url) => URL.revokeObjectURL(url));
-    };
+    return () => preview.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
-  // Drag & drop
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const selected = Array.from(e.dataTransfer.files);
+    const selected = Array.from(e.dataTransfer.files || []);
     setFiles(selected);
     setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const selected = Array.from(e.target.files);
-    setFiles(selected);
-    setPreview(selected.map((f) => URL.createObjectURL(f)));
-  };
-
-  // Upload
   const handleUpload = async () => {
-    if (!files.length) {
-      showMessage("error", "Select images first");
-      return;
-    }
-
+    if (!files.length) return showMessage("error", "Select images first");
     setLoading(true);
 
     const formData = new FormData();
-    files.forEach((file) => formData.append("images", file));
+    files.forEach((f) => formData.append("images", f));
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery/upload`, {
@@ -89,7 +59,6 @@ export default function GalleryUpload() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Upload failed");
 
       setFiles([]);
@@ -97,14 +66,13 @@ export default function GalleryUpload() {
       fetchGallery();
       showMessage("success", "Images uploaded successfully!");
     } catch (err: any) {
-      console.error("UPLOAD ERROR:", err);
-      showMessage("error", err.message || "Upload failed");
+      console.error(err);
+      showMessage("error", err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete
   const deleteImage = async (id: string) => {
     if (!confirm("Delete this image?")) return;
 
@@ -112,24 +80,19 @@ export default function GalleryUpload() {
       const res = await fetch(`${API_BASE_URL}/api/gallery/${id}`, {
         method: "DELETE",
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Delete failed");
-
+      if (!res.ok) throw new Error("Delete failed");
       fetchGallery();
-      showMessage("success", "Image deleted successfully!");
+      showMessage("success", "Image deleted");
     } catch (err: any) {
-      console.error("DELETE ERROR:", err);
-      showMessage("error", err.message || "Delete failed");
+      showMessage("error", err.message);
     }
   };
 
   return (
     <div className="space-y-6 p-4">
-      {/* Toast */}
       {msg && (
         <div
-          className={`fixed top-4 right-4 px-4 py-2 rounded shadow text-white ${
+          className={`fixed top-4 right-4 px-4 py-2 rounded text-white ${
             msg.type === "success" ? "bg-green-600" : "bg-red-600"
           }`}
         >
@@ -137,72 +100,52 @@ export default function GalleryUpload() {
         </div>
       )}
 
-      {/* Upload box */}
+      {/* Upload */}
       <div
+        className="border-2 border-dashed p-6 text-center"
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        className="bg-white p-6 rounded-lg shadow border-2 border-dashed border-gray-300 text-center"
+        onDragOver={(e) => e.preventDefault()}
       >
-        <h3 className="text-lg font-semibold mb-3">Upload Images</h3>
-        <p className="text-gray-500 mb-3">
-          Drag & drop images or click to select
-        </p>
+        <input type="file" multiple accept="image/*" onChange={(e) => {
+          const f = Array.from(e.target.files || []);
+          setFiles(f);
+          setPreview(f.map((x) => URL.createObjectURL(x)));
+        }} />
 
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-          className="mb-4"
-        />
-
-        {preview.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            {preview.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                className="h-32 w-full object-cover rounded"
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-4 gap-3 mt-4">
+          {preview.map((p, i) => (
+            <img key={i} src={p} className="h-24 w-full object-cover rounded" />
+          ))}
+        </div>
 
         <button
           onClick={handleUpload}
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
         >
-          {loading ? "Uploading..." : "Upload Images"}
+          {loading ? "Uploading..." : "Upload"}
         </button>
       </div>
 
-      {/* Gallery list */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-xl font-semibold mb-4">Uploaded Images</h3>
+      {/* Gallery */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {images.map((img) => {
+          const imgSrc = img.url.startsWith("http")
+            ? img.url
+            : `${API_BASE_URL}${img.url}`;
 
-        {images.length === 0 ? (
-          <p>No images uploaded yet.</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {images.map((img) => (
-              <div key={img._id} className="relative group">
-                {/* ✅ DIRECT HTTPS IMAGE */}
-                <img
-                  src={img.url}
-                  className="h-32 w-full object-cover rounded"
-                />
-
-                <button
-                  onClick={() => deleteImage(img._id)}
-                  className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center rounded transition"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+          return (
+            <div key={img._id} className="relative group">
+              <img src={imgSrc} className="h-32 w-full object-cover rounded" />
+              <button
+                onClick={() => deleteImage(img._id)}
+                className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100"
+              >
+                Delete
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
