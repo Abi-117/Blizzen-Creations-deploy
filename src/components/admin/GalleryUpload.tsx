@@ -2,9 +2,13 @@
 
 import { useEffect, useState, DragEvent } from "react";
 
-export type GalleryImage = { _id: string; url: string };
+export type GalleryImage = {
+  _id: string;
+  url: string;       // full or relative URL from backend
+  caption?: string;
+};
 
-const API_BASE_URL = process.env.VITE_API_URL!;
+const API_BASE_URL = process.env.VITE_API_URL!; // must be set in deploy env
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);
@@ -13,12 +17,17 @@ export default function GalleryUpload() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  // Prepend API_BASE_URL if URL is relative
+  const getFullUrl = (url: string) =>
+    url.startsWith("http") ? url : `${API_BASE_URL}/${url}`;
+
+  // Show toast message
   const showMessage = (type: "success" | "error", text: string) => {
     setMsg({ type, text });
     setTimeout(() => setMsg(null), 3000);
   };
 
-  // Fetch gallery
+  // Fetch gallery images from backend
   const fetchGallery = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery`);
@@ -33,10 +42,11 @@ export default function GalleryUpload() {
 
   useEffect(() => {
     fetchGallery();
+    // cleanup preview URLs
     return () => preview.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
-  // Drag & drop
+  // Drag & Drop handlers
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const selected = Array.from(e.dataTransfer.files);
@@ -46,6 +56,7 @@ export default function GalleryUpload() {
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => e.preventDefault();
 
+  // File input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const selected = Array.from(e.target.files);
@@ -53,6 +64,7 @@ export default function GalleryUpload() {
     setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
+  // Upload files to backend
   const handleUpload = async () => {
     if (!files.length) return showMessage("error", "Select images first");
     setLoading(true);
@@ -81,6 +93,7 @@ export default function GalleryUpload() {
     }
   };
 
+  // Delete image
   const deleteImage = async (id: string) => {
     if (!confirm("Delete this image?")) return;
 
@@ -102,6 +115,7 @@ export default function GalleryUpload() {
 
   return (
     <div className="space-y-6 p-4">
+
       {/* Toast */}
       {msg && (
         <div
@@ -115,13 +129,19 @@ export default function GalleryUpload() {
 
       {/* Upload Section */}
       <div
-        className="bg-white p-6 rounded-lg shadow border-2 border-dashed border-gray-300 text-center"
+        className="bg-white p-6 rounded-lg shadow border-2 border-dashed border-gray-300 text-center cursor-pointer"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
         <h3 className="text-lg font-semibold mb-4">Upload Images</h3>
         <p className="mb-2 text-gray-500">Drag & drop images here or click to select files</p>
-        <input type="file" multiple accept="image/*" onChange={handleFileChange} className="mb-4 cursor-pointer" />
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleFileChange}
+          className="mb-4 cursor-pointer"
+        />
         {preview.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             {preview.map((src, i) => (
@@ -147,7 +167,11 @@ export default function GalleryUpload() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map((img) => (
               <div key={img._id} className="relative group">
-                <img src={img.url} alt="Gallery" className="h-32 w-full object-cover rounded" />
+                <img
+                  src={getFullUrl(img.url)}
+                  alt={img.caption || "Gallery"}
+                  className="h-32 w-full object-cover rounded"
+                />
                 <button
                   onClick={() => deleteImage(img._id)}
                   className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-semibold rounded transition"
