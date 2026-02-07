@@ -4,7 +4,7 @@ import { useEffect, useState, DragEvent } from "react";
 
 export type GalleryImage = { _id: string; url: string };
 
-const API_BASE_URL = process.env.VITE_API_URL || "http://localhost:5001" || "http://localhost:8081";
+const API_BASE_URL = process.env.VITE_API_URL!;
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);
@@ -12,6 +12,11 @@ export default function GalleryUpload() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const showMessage = (type: "success" | "error", text: string) => {
+    setMsg({ type, text });
+    setTimeout(() => setMsg(null), 3000);
+  };
 
   // Fetch gallery
   const fetchGallery = async () => {
@@ -31,24 +36,15 @@ export default function GalleryUpload() {
     return () => preview.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
-  const showMessage = (type: "success" | "error", text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 3000);
-  };
-
-  // Drag-and-drop handlers
+  // Drag & drop
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const dt = e.dataTransfer;
-    if (!dt.files) return;
-    const selected = Array.from(dt.files);
+    const selected = Array.from(e.dataTransfer.files);
     setFiles(selected);
     setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => e.preventDefault();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -125,13 +121,7 @@ export default function GalleryUpload() {
       >
         <h3 className="text-lg font-semibold mb-4">Upload Images</h3>
         <p className="mb-2 text-gray-500">Drag & drop images here or click to select files</p>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-          className="mb-4 cursor-pointer"
-        />
+        <input type="file" multiple accept="image/*" onChange={handleFileChange} className="mb-4 cursor-pointer" />
         {preview.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             {preview.map((src, i) => (
@@ -157,11 +147,7 @@ export default function GalleryUpload() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map((img) => (
               <div key={img._id} className="relative group">
-                <img
-                  src={img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`}
-                  alt="Gallery"
-                  className="h-32 w-full object-cover rounded"
-                />
+                <img src={img.url} alt="Gallery" className="h-32 w-full object-cover rounded" />
                 <button
                   onClick={() => deleteImage(img._id)}
                   className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-semibold rounded transition"

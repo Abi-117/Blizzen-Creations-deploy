@@ -5,11 +5,11 @@ import { AiOutlineLeft, AiOutlineRight, AiOutlineClose } from "react-icons/ai";
 
 export type GalleryImage = {
   _id: string;
-  url: string;
-  caption?: string; // optional for lightbox
+  url: string;       // full URL to image
+  caption?: string;  // optional for lightbox
 };
 
-const API_BASE_URL = process.env.VITE_API_URL || "http://localhost:5001" || "http://localhost:8081";
+const API_BASE_URL = process.env.VITE_API_URL!; // must be set in deploy env
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -58,7 +58,6 @@ export default function Gallery() {
 
   return (
     <section className="relative bg-gradient-to-b from-blue-50 to-white py-40 px-4">
-      {/* Section Title */}
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-gray-800 mb-2">Our Gallery</h2>
         <div className="flex justify-center items-center gap-2 mb-2">
@@ -67,7 +66,6 @@ export default function Gallery() {
         </div>
       </div>
 
-      {/* Gallery Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
         {images.map((img, i) => (
           <div
@@ -76,12 +74,10 @@ export default function Gallery() {
             onClick={() => openLightbox(i)}
           >
             <img
-              src={img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`}
+              src={img.url}
               alt={img.caption || "Gallery"}
               className="w-full h-52 object-cover rounded-xl"
             />
-
-            {/* Hover overlay */}
             <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
               <p className="text-white font-semibold text-lg">View</p>
             </div>
@@ -92,31 +88,18 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <button
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white text-3xl"
-          >
+          <button onClick={closeLightbox} className="absolute top-4 right-4 text-white text-3xl">
             <AiOutlineClose />
           </button>
-          <button
-            onClick={prevImage}
-            className="absolute left-4 text-white text-4xl"
-          >
+          <button onClick={prevImage} className="absolute left-4 text-white text-4xl">
             <AiOutlineLeft />
           </button>
           <img
-            src={
-              images[lightboxIndex].url.startsWith("http")
-                ? images[lightboxIndex].url
-                : `${API_BASE_URL}${images[lightboxIndex].url}`
-            }
+            src={images[lightboxIndex].url}
             alt={images[lightboxIndex].caption || "Gallery"}
             className="max-h-[80vh] max-w-[80vw] object-contain rounded-xl"
           />
-          <button
-            onClick={nextImage}
-            className="absolute right-4 text-white text-4xl"
-          >
+          <button onClick={nextImage} className="absolute right-4 text-white text-4xl">
             <AiOutlineRight />
           </button>
           {images[lightboxIndex].caption && (
@@ -126,10 +109,6 @@ export default function Gallery() {
           )}
         </div>
       )}
-
-      {/* Decorative background circles */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-purple-200/20 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-      <div className="absolute bottom-0 right-48 w-96 h-96 bg-yellow-200/20 rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
     </section>
   );
 }
