@@ -8,7 +8,7 @@ export type GalleryImage = {
 };
 
 // ✅ API only for backend calls
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL!;
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);

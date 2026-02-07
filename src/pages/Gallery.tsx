@@ -10,7 +10,7 @@ export type GalleryImage = {
 };
 
 // ✅ API only for fetching data (NOT for images)
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL!;
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
