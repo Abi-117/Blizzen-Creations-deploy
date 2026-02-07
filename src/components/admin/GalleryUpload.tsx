@@ -2,13 +2,9 @@
 
 import { useEffect, useState, DragEvent } from "react";
 
-export type GalleryImage = {
-  _id: string;
-  url: string; // Cloudinary URL
-};
+export type GalleryImage = { _id: string; url: string };
 
-// ✅ API only for backend calls
-const API_BASE_URL = import.meta.env.VITE_API_URL!;
+const API_BASE_URL = process.env.VITE_API_URL || "http://localhost:5001";
 
 export default function GalleryUpload() {
   const [files, setFiles] = useState<File[]>([]);
@@ -17,70 +13,56 @@ export default function GalleryUpload() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  /* Toast helper */
-  const showMessage = (type: "success" | "error", text: string) => {
-    setMsg({ type, text });
-    setTimeout(() => setMsg(null), 3000);
-  };
-
-  /* Fetch gallery images */
+  // Fetch gallery
   const fetchGallery = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/gallery`, {
-        cache: "no-store",
-      });
-
+      const res = await fetch(`${API_BASE_URL}/api/gallery`);
       if (!res.ok) throw new Error("Failed to fetch gallery");
-
       const data: GalleryImage[] = await res.json();
       setImages(data);
     } catch (err) {
-      console.error("FETCH ERROR:", err);
+      console.error(err);
       showMessage("error", "Failed to load gallery");
     }
   };
 
   useEffect(() => {
     fetchGallery();
-
-    // cleanup preview URLs
     return () => preview.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
-  /* Drag & Drop */
+  const showMessage = (type: "success" | "error", text: string) => {
+    setMsg({ type, text });
+    setTimeout(() => setMsg(null), 3000);
+  };
+
+  // Drag-and-drop handlers
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (!e.dataTransfer.files) return;
-
-    const selected = Array.from(e.dataTransfer.files);
+    const dt = e.dataTransfer;
+    if (!dt.files) return;
+    const selected = Array.from(dt.files);
     setFiles(selected);
-    setPreview(selected.map((file) => URL.createObjectURL(file)));
+    setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  /* File input */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-
     const selected = Array.from(e.target.files);
     setFiles(selected);
-    setPreview(selected.map((file) => URL.createObjectURL(file)));
+    setPreview(selected.map((f) => URL.createObjectURL(f)));
   };
 
-  /* Upload to Cloudinary (via backend) */
   const handleUpload = async () => {
-    if (!files.length) {
-      showMessage("error", "Select images first");
-      return;
-    }
-
+    if (!files.length) return showMessage("error", "Select images first");
     setLoading(true);
 
     const formData = new FormData();
-    files.forEach((file) => formData.append("images", file));
+    files.forEach((f) => formData.append("images", f));
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery/upload`, {
@@ -96,30 +78,29 @@ export default function GalleryUpload() {
       fetchGallery();
       showMessage("success", "Images uploaded successfully!");
     } catch (err: any) {
-      console.error("UPLOAD ERROR:", err);
-      showMessage("error", err.message || "Upload failed");
+      console.error("Upload error:", err);
+      showMessage("error", `Upload failed: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  /* Delete image */
   const deleteImage = async (id: string) => {
     if (!confirm("Delete this image?")) return;
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery/${id}`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Delete failed");
 
       fetchGallery();
       showMessage("success", "Image deleted successfully!");
     } catch (err: any) {
-      console.error("DELETE ERROR:", err);
-      showMessage("error", err.message || "Delete failed");
+      console.error("Delete error:", err);
+      showMessage("error", `Delete failed: ${err.message}`);
     }
   };
 
@@ -128,7 +109,7 @@ export default function GalleryUpload() {
       {/* Toast */}
       {msg && (
         <div
-          className={`fixed top-4 right-4 px-4 py-2 rounded shadow text-white z-50 ${
+          className={`fixed top-4 right-4 px-4 py-2 rounded shadow text-white ${
             msg.type === "success" ? "bg-green-500" : "bg-red-500"
           }`}
         >
@@ -143,10 +124,7 @@ export default function GalleryUpload() {
         onDragOver={handleDragOver}
       >
         <h3 className="text-lg font-semibold mb-4">Upload Images</h3>
-        <p className="mb-2 text-gray-500">
-          Drag & drop images here or click to select
-        </p>
-
+        <p className="mb-2 text-gray-500">Drag & drop images here or click to select files</p>
         <input
           type="file"
           multiple
@@ -154,20 +132,13 @@ export default function GalleryUpload() {
           onChange={handleFileChange}
           className="mb-4 cursor-pointer"
         />
-
         {preview.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             {preview.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt="Preview"
-                className="h-32 w-full object-cover rounded"
-              />
+              <img key={i} src={src} alt="Preview" className="h-32 w-full object-cover rounded" />
             ))}
           </div>
         )}
-
         <button
           onClick={handleUpload}
           disabled={loading}
@@ -180,21 +151,17 @@ export default function GalleryUpload() {
       {/* Gallery Section */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h3 className="text-xl font-semibold mb-4">Uploaded Images</h3>
-
         {images.length === 0 ? (
-          <p className="text-gray-500">No images uploaded yet.</p>
+          <p>No images uploaded yet.</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map((img) => (
               <div key={img._id} className="relative group">
-                {/* ✅ DIRECT Cloudinary URL */}
                 <img
-                  src={img.url}
+                  src={img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`}
                   alt="Gallery"
-                  loading="lazy"
                   className="h-32 w-full object-cover rounded"
                 />
-
                 <button
                   onClick={() => deleteImage(img._id)}
                   className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center font-semibold rounded transition"
