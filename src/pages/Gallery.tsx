@@ -9,7 +9,7 @@ export type GalleryImage = {
   caption?: string; // optional for lightbox
 };
 
-const API_BASE_URL = process.env.VITE_API_URL || "http://localhost:5001"; // default to localhost for development";
+const API_BASE_URL = process.env.VITE_API_URL! || "http://localhost:5001"; // default to localhost for development";
 
 export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
