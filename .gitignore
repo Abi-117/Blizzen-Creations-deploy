@@ -31,3 +31,5 @@ dist-ssr
 
 .github/instructions/kluster-code-verify.instructions.md
 .kluster
+
+.vercel

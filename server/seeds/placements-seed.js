@@ -16,6 +16,7 @@ const placementsData = [
     isActive: true
   },
   {
+    
     studentName: "Priya Singh",
     course: "Web Development",
     company: "Infosys",
