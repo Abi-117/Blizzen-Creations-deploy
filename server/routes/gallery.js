@@ -29,18 +29,27 @@ router.get("/", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const image = await Gallery.findById(req.params.id);
-    if (!image) return res.status(404).json({ error: "Image not found" });
+    if (!image) {
+      return res.status(404).json({ error: "Image not found" });
+    }
 
-    // 🔥 Delete from Cloudinary
-    await cloudinary.uploader.destroy(image.public_id);
+    // ✅ Cloudinary delete ONLY if public_id exists
+    if (image.public_id) {
+      try {
+        await cloudinary.uploader.destroy(image.public_id);
+      } catch (cloudErr) {
+        console.error("Cloudinary delete failed:", cloudErr.message);
+      }
+    }
 
-    // 🔥 Delete from DB
     await image.deleteOne();
 
-    res.json({ message: "Image deleted successfully" });
+    res.json({ message: "Deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: "Delete failed" });
+    console.error("DELETE ERROR:", err);
+    res.status(500).json({ error: "Server delete failed" });
   }
 });
+
 
 export default router;
