@@ -244,11 +244,13 @@ export default function LandingPage() {
 
       {/* ================= CONTACT ================= */}
       <section id="contact" className="scroll-mt-24 p-10 bg-secondary/30">
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto text-center">
-          {data.contact.phone && <div>📞 {data.contact.phone}</div>}
-          {data.contact.email && <div>✉️ {data.contact.email}</div>}
-          {data.contact.address && <div>📍 {data.contact.address}</div>}
-        </div>
+      {data.contact.address && (
+        <div className="group bg-background rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border">
+           <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition"> 📍 </div> 
+           <h3 className="text-lg font-semibold mb-1">Visit Us</h3> 
+           <p className="text-muted-foreground">{data.contact.address}</p>
+        </div> )} 
+           
       </section>
     </main>
   );
