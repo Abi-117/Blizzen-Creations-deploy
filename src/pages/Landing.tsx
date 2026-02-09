@@ -186,7 +186,7 @@ export default function LandingPage() {
               {data.courses.map((course) => (
                 <div key={course.id} className="min-w-full px-2">
                   <Card>
-                    <CardHeader className="bg-primary text-white">
+                    <CardHeader className="bg-primary text-white text-center">
                       <h3 className="text-2xl font-bold">{course.title}</h3>
                     </CardHeader>
 
@@ -243,15 +243,57 @@ export default function LandingPage() {
       </section>
 
       {/* ================= CONTACT ================= */}
-      <section id="contact" className="scroll-mt-24 p-10 bg-secondary/30">
+            <section id="contact" className="section-padding p-10 bg-gradient-to-b from-background to-muted/30">
+      <div className="text-center max-w-4xl mx-auto mb-16">
+      <span className="inline-block text-primary font-semibold mb-4 uppercase tracking-wider text-sm">
+        Get In Touch
+      </span>
+      <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+        Start Your IT Career Journey Today
+      </h2>
+      <p className="text-lg text-muted-foreground">
+        Have questions? We'd love to hear from you. Send us a message and we'll
+        respond within 24 hours.
+      </p>
+    </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      {/* Phone */}
+      {data.contact.phone && (
+        <div className="group bg-background rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border">
+          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition">
+            📞
+          </div>
+          <h3 className="text-lg font-semibold mb-1">Call Us</h3>
+          <p className="text-muted-foreground">{data.contact.phone}</p>
+        </div>
+      )}
+
+      {/* Email */}
+      {data.contact.email && (
+        <div className="group bg-background rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border">
+          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition">
+            ✉️
+          </div>
+          <h3 className="text-lg font-semibold mb-1">Email Us</h3>
+          <p className="text-muted-foreground break-all">
+            {data.contact.email}
+          </p>
+        </div>
+      )}
+
+      {/* Address */}
       {data.contact.address && (
         <div className="group bg-background rounded-2xl p-6 shadow-md hover:shadow-xl transition-all border">
-           <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition"> 📍 </div> 
-           <h3 className="text-lg font-semibold mb-1">Visit Us</h3> 
-           <p className="text-muted-foreground">{data.contact.address}</p>
-        </div> )} 
-           
+          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:scale-110 transition">
+            📍
+          </div>
+          <h3 className="text-lg font-semibold mb-1">Visit Us</h3>
+          <p className="text-muted-foreground">{data.contact.address}</p>
+        </div>
+      )}
+    </div>
       </section>
+
     </main>
   );
 }
