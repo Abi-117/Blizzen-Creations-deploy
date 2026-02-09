@@ -163,7 +163,14 @@ const Home = () => {
 >
   <div className="container mx-auto px-4 relative z-10">
     <div className="grid md:grid-cols-1 gap-12 items-center">
-      <div className="space-y-6 animate-slide-right text-center md:text-left">
+      <div
+  className="
+    space-y-6 animate-slide-right
+    text-center md:text-left
+    mt-10 sm:mt-14 md:mt-0
+  "
+>
+
 
         {/* HERO TITLE */}
         <h1

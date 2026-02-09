@@ -27,14 +27,12 @@ const highlights = [
 /* ================= TYPES ================= */
 type Course = { id: string; title: string; duration: string; careerOpportunities: string };
 type Feature = { id: string; title: string; description: string };
-type Stat = { id: string; label: string; value: string };
 
 type LandingData = {
-  hero: { title: string; subtitle: string };
+  hero: { title: string; subtitle: string; cta: string };
   about: { description: string };
   courses: Course[];
   features: Feature[];
-  stats: Stat[];
   contact: { phone: string; email: string; address: string };
 };
 
@@ -58,11 +56,11 @@ export default function LandingPage() {
         const res = await fetch(`${BASE_URL}/api/landing`);
         if (!res.ok) throw new Error("Fetch failed");
         const json = await res.json();
-        setData(json);
+        setTimeout(() => setData(json), 800); // 👈 smooth delay
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 900);
       }
     };
     fetchData();
@@ -77,8 +75,26 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [isPaused, data]);
 
-  if (loading) return <div className="p-10 text-center">Loading...</div>;
-  if (!data) return <div className="p-10 text-center text-red-500">Failed to load</div>;
+  /* ================= LOADING UI ================= */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 text-center">
+        <div className="w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+        <p className="text-lg text-muted-foreground animate-pulse">
+          Preparing your learning journey…
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-4 w-full max-w-5xl mt-10 px-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-40 rounded-xl bg-muted animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!data)
+    return <div className="p-10 text-center text-red-500">Failed to load page</div>;
 
   const prev = () =>
     setCurrentIndex((p) => (p - 1 + data.courses.length) % data.courses.length);
@@ -97,10 +113,13 @@ export default function LandingPage() {
       {/* ================= HERO ================= */}
       <section className="min-h-screen flex items-center justify-center pt-24 text-center">
         <div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">{data.hero.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            {data.hero.title}
+          </h1>
           <p className="text-muted-foreground max-w-xl mx-auto mb-8">
             {data.hero.subtitle}
           </p>
+
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg">
               <a href="#contact">
@@ -117,10 +136,7 @@ export default function LandingPage() {
       </section>
 
       {/* ================= ABOUT ================= */}
-      <section
-        id="about"
-        className="scroll-mt-24 bg-secondary/30 p-7"
-      >
+      <section id="about" className="scroll-mt-24 p-10 bg-secondary/30">
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           <div>
             <h2 className="text-4xl font-bold mb-6">
@@ -133,7 +149,10 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-2 gap-4">
             {highlights.map((h, i) => (
-              <div key={i} className="bg-background p-6 rounded-xl border">
+              <div
+                key={i}
+                className="bg-background p-6 rounded-xl border hover:shadow-lg transition-all"
+              >
                 <h.icon className="text-primary mb-3" />
                 <h3 className="font-semibold">{h.title}</h3>
                 <p className="text-sm text-muted-foreground">{h.description}</p>
@@ -144,11 +163,8 @@ export default function LandingPage() {
       </section>
 
       {/* ================= COURSES ================= */}
-      <section
-        id="courses"
-        className="scroll-mt-24 py-20"
-      >
-        <div className="max-w-5xl mx-auto text-center mb-12">
+      <section id="courses" className="scroll-mt-24 py-20">
+        <div className="text-center mb-12">
           <h2 className="text-4xl font-bold">
             Launch Your <span className="text-primary">IT Career</span>
           </h2>
@@ -189,28 +205,30 @@ export default function LandingPage() {
                       <div>
                         <h4 className="font-semibold mb-2">Career Opportunities</h4>
                         <div className="flex flex-wrap gap-2 justify-center">
-                          {course.careerOpportunities
-                            .split(",")
-                            .map((r, i) => (
-                              <Badge key={i} variant="outline">
-                                {r.trim()}
-                              </Badge>
-                            ))}
+                          {course.careerOpportunities.split(",").map((r, i) => (
+                            <Badge key={i} variant="outline">
+                              {r.trim()}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-3">
-                        {["Real-time projects", "Placement support", "Interview prep", "Expert mentors"].map(
-                          (item, i) => (
-                            <div key={i} className="flex gap-2 items-center">
-                              <CheckCircle2 className="text-primary w-5 h-5" />
-                              {item}
-                            </div>
-                          )
-                        )}
+                        {[
+                          "Real-time projects",
+                          "Placement support",
+                          "Interview preparation",
+                          "Expert mentorship",
+                        ].map((item, i) => (
+                          <div key={i} className="flex gap-2 items-center">
+                            <CheckCircle2 className="text-primary w-5 h-5" />
+                            {item}
+                          </div>
+                        ))}
                       </div>
                     </CardContent>
 
+                    {/* ❌ PRICE REMOVED HERE */}
                     <CardFooter className="justify-center">
                       <Button size="lg" onClick={() => handleApplyNow(course.title)}>
                         Apply Now <ArrowRight className="ml-2" />
@@ -224,27 +242,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ================= FEATURES ================= */}
-      <section
-        id="features"
-        className="scroll-mt-24 py-20 bg-muted/30"
-      >
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-          {data.features.map((f) => (
-            <div key={f.id} className="bg-background p-6 rounded-xl border">
-              <h3 className="font-bold mb-2">{f.title}</h3>
-              <p className="text-muted-foreground">{f.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ================= CONTACT ================= */}
-      <section
-        id="contact"
-        className="scroll-mt-24 p-10 bg-secondary/30"
-      >
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 text-center">
+      <section id="contact" className="scroll-mt-24 p-10 bg-secondary/30">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto text-center">
           {data.contact.phone && <div>📞 {data.contact.phone}</div>}
           {data.contact.email && <div>✉️ {data.contact.email}</div>}
           {data.contact.address && <div>📍 {data.contact.address}</div>}
