@@ -87,7 +87,7 @@ const EnquiryPopup = ({ isOpen, onClose }: EnquiryPopupProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex mt-96 items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
         <CardHeader className="relative">
           <Button
